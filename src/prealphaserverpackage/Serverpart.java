@@ -48,6 +48,7 @@ public class Serverpart {
 		char[] cbuf = new char [100];
 		HashMap<String,Number> anzahluser = null;
 		HashMap<String,String> behelfsmap=null;
+		String UserID = null;
 		try {
 			serversocket = new ServerSocket(port);
 		} catch (IOException e1) {
@@ -107,6 +108,7 @@ public class Serverpart {
 	}
 	//Ende try catch
 	try {
+		UserID=(String) ois.readObject();//get Users ID
 		behelfsmap=(HashMap<String, String>)ois.readObject();
 	} catch (ClassNotFoundException | IOException e3) {
 		// TODO Auto-generated catch block
@@ -169,16 +171,16 @@ public class Serverpart {
 //		pw.flush();
 //	}
 	try {
-		fw = new FileWriter (behelfsmap.keySet()+"_Bestellung.txt");
+		fw = new FileWriter (UserID+"s_Bestellung.txt");
 	} catch (IOException e2) {
 		// TODO Auto-generated catch block
 		e2.printStackTrace();
 	}
 	pw = new PrintWriter(fw);
-	pw.write(behelfsmap.get(behelfsmap.keySet()));
+	pw.write(behelfsmap.get(UserID));
 	pw.flush();
 	try {
-		fr = new FileReader (behelfsmap.keySet()+"_Bestellung.txt");
+		fr = new FileReader (UserID+"s_Bestellung.txt");
 	} catch (FileNotFoundException e1) {
 		// TODO Auto-generated catch block
 		e1.printStackTrace();
