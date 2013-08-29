@@ -20,7 +20,6 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -45,10 +44,13 @@ public class Serverpart {
 		InputStream i=null;
 		OutputStream o=null;
 		ObjectInputStream ois=null;
+		
+		
 		char[] cbuf = new char [100];
 		HashMap<String,Number> anzahluser = null;
 		HashMap<String,String> behelfsmap=null;
 		String UserID = null;
+		String Restaurant=null;
 		try {
 			serversocket = new ServerSocket(port);
 		} catch (IOException e1) {
@@ -78,28 +80,6 @@ public class Serverpart {
 	}
 	//Ende try catch
 	
-	try {
-		fw= new FileWriter("Essensliste1.txt");
-		fr=new FileReader("Essensliste1.txt");
-	} catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
-	br=new BufferedReader(fr);
-	for(int x=0; x<cbuf.length;x++){
-		try {
-			
-			br.read(cbuf);
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}//Ende try catch
-	}
-	//Ende try catch
-	pw= new PrintWriter(fw);
-	pw.write("Hello this is a test"+anzahluser);
-	pw.flush();
 	try {
 		ois= new ObjectInputStream(i);
 	} catch (IOException e) {
@@ -182,14 +162,6 @@ public class Serverpart {
 	try {
 		fr = new FileReader (UserID+"s_Bestellung.txt");
 	} catch (FileNotFoundException e1) {
-		// TODO Auto-generated catch block
-		e1.printStackTrace();
-	}
-	
-	//zu testzwecken sys.out
-	try {
-		System.out.println(fr.read());
-	} catch (IOException e1) {
 		// TODO Auto-generated catch block
 		e1.printStackTrace();
 	}
