@@ -10,7 +10,7 @@ package prealphaserverpackage;
  */
 @SuppressWarnings("serial")
 public class NewMDIApplication extends javax.swing.JFrame {
-
+	Thread backend=null;
     /**
      * Creates new form NewMDIApplication
      */
@@ -53,14 +53,14 @@ public class NewMDIApplication extends javax.swing.JFrame {
         desktopPane.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         desktopPane.setFont(new java.awt.Font("Lucida Blackletter", 2, 18)); // NOI18N
 
-        menuBar.setFont(new java.awt.Font("Lucida Blackletter", 2, 18)); // NOI18N
+        menuBar.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
 
         fileMenu.setMnemonic('f');
         fileMenu.setText("File");
-        fileMenu.setFont(new java.awt.Font("Lucida Blackletter", 2, 18)); // NOI18N
+        fileMenu.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
 
         openMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
-        openMenuItem.setFont(new java.awt.Font("Lucida Blackletter", 2, 18)); // NOI18N
+        openMenuItem.setFont(new java.awt.Font("Times New Romanr", 2, 18)); // NOI18N
         openMenuItem.setMnemonic('o');
         openMenuItem.setText("NewBestellServer");
         openMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -73,7 +73,7 @@ public class NewMDIApplication extends javax.swing.JFrame {
         openMenuItem.getAccessibleContext().setAccessibleParent(null);
 
         exitMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
-        exitMenuItem.setFont(new java.awt.Font("Lucida Blackletter", 2, 18)); // NOI18N
+        exitMenuItem.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
         exitMenuItem.setMnemonic('x');
         exitMenuItem.setText("Exit");
         exitMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -87,9 +87,9 @@ public class NewMDIApplication extends javax.swing.JFrame {
 
         helpMenu.setMnemonic('h');
         helpMenu.setText("Help");
-        helpMenu.setFont(new java.awt.Font("Lucida Blackletter", 2, 18)); // NOI18N
+        helpMenu.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
 
-        contentMenuItem.setFont(new java.awt.Font("Lucida Blackletter", 2, 18)); // NOI18N
+        contentMenuItem.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
         contentMenuItem.setMnemonic('c');
         contentMenuItem.setText("Contents");
         contentMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -99,7 +99,7 @@ public class NewMDIApplication extends javax.swing.JFrame {
         });
         helpMenu.add(contentMenuItem);
 
-        aboutMenuItem.setFont(new java.awt.Font("Lucida Blackletter", 2, 18)); // NOI18N
+        aboutMenuItem.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
         aboutMenuItem.setMnemonic('a');
         aboutMenuItem.setText("About");
         aboutMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -133,8 +133,12 @@ public class NewMDIApplication extends javax.swing.JFrame {
 
     private void openMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
     	 // TODO add your handling code here:
+    	backend=new Thread(new Runnable(){
+    		public void run(){
     	Serverpart sp=new Serverpart();
        sp.runanew(5543);
+    		}});
+    	backend.start();
     }
 
     private void contentMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
