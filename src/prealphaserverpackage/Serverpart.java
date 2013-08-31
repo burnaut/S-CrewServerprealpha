@@ -125,10 +125,9 @@ public clientsidethreads(Socket clientSocket) {
 	pw= new PrintWriter(fw);
 	pw.write(userbestellung.get(UserID));
 	
+	pw.close();
 	try {
-		ois.close();
-		pw.close();
-		clientside.close();
+		fw.close();
 	} catch (IOException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
@@ -158,7 +157,12 @@ System.out.println("Bestellung verarbeitet");
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-              
+          try {
+			fr.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}    
         
 		}	
  public void bildereinspeichern(){
@@ -193,11 +197,9 @@ System.out.println("Bestellung verarbeitet");
 	pw.flush();
 	lock.unlock();
 	try {
-		ois.close();
 		pw.close();
 		fw.close();
-		clientside.close();
-	} catch (IOException e) {
+		} catch (IOException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
@@ -234,7 +236,7 @@ System.out.println("Bestellung verarbeitet");
 	}
     try {
 		oos.close();
-	} catch (IOException e) {
+		} catch (IOException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
