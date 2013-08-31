@@ -134,7 +134,7 @@ public class NewMDIApplication extends javax.swing.JFrame {
     private void openMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
     	 // TODO add your handling code here:
     	Serverpart sp=new Serverpart();
-       sp.neuerserversocket(5543);
+       sp.runanew(5543);
     }
 
     private void contentMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
