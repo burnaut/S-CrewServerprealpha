@@ -8,10 +8,12 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import javax.imageio.ImageIO;
 
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -48,7 +50,6 @@ public static	Socket clientside = null;
 			e.printStackTrace();
 		}
 		while(true){
-			
 			try {
 				clientside=serversocket.accept();
 			} catch (IOException e) {
@@ -82,32 +83,40 @@ HashMap<String,String> userbestellung=null;
 String UserID = null;
 String Restaurant;
 String request=null;
-
+String AdminID;
+String AdminPw;
+File f;
+FilenameFilter fnf;
 public clientsidethreads(Socket clientSocket) {
     this.clientside = clientSocket;
     
     }
   public void run(){
- 
+  try {
+	Thread.sleep(300);
+} catch (InterruptedException e1) {
+	// TODO Auto-generated catch block
+	e1.printStackTrace();
+}
 	  try {
 		ois= new ObjectInputStream(clientside.getInputStream());
-	} catch (IOException e) {
+		oos = new ObjectOutputStream(clientside.getOutputStream());{
+			handlerequest(ois,oos);
+		}
+	
+	  } catch (IOException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
-	try {
-		oos = new ObjectOutputStream(clientside.getOutputStream());
-	} catch (IOException e3) {
-		// TODO Auto-generated catch block
-		e3.printStackTrace();
-	}
-	handlerequest(ois,oos);
-	exit();
+	
+		
+	
+//	exit();
   }
-	//-->Am Ende
+	
 
  @SuppressWarnings("unchecked")
- public void setOrder(){
+ public void setOrder() {
 	 System.out.println("Bestellung kommt an");
 	 try {
 		UserID=(String) ois.readObject();
@@ -134,37 +143,18 @@ public clientsidethreads(Socket clientSocket) {
 	}
 System.out.println("Bestellung verarbeitet");
  }
- public void getRestaurant(){
-	String tempRestaurant=null;	 
-	 try {
-			 
-			fr = new FileReader("Restaurant.txt");
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		 try {
-			fr.read(cbuf);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		 tempRestaurant=String.valueOf(cbuf);
-		 System.out.println(tempRestaurant);
-		 try {
-			oos.writeObject(tempRestaurant);
-			} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-          try {
-			fr.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}    
-        
-		}	
+ public void getRestaurant() {
+	String tempRestaurant=null;
+	try( BufferedReader fr =
+	           new BufferedReader( new FileReader( "Restaurant.txt" ))) {
+	      tempRestaurant = fr.readLine();
+	      System.out.println( tempRestaurant );
+		    
+	    oos.writeObject(tempRestaurant);
+	} catch (IOException ex) {
+	    ex.printStackTrace();
+     }        
+	}	
  public void bildereinspeichern(){
 		BufferedImage img = null;
 		File f =new File("C:/Users/Sebastian/Desktop/andr.jpg");
@@ -178,7 +168,7 @@ System.out.println("Bestellung verarbeitet");
 		
 		
 	}
- public void setRestaurant(){
+ public void setRestaurant() {
     try {
 		Restaurant=(String) ois.readObject();
 	} catch (ClassNotFoundException | IOException e1) {
@@ -205,8 +195,13 @@ System.out.println("Bestellung verarbeitet");
 	}
 	
  }
+ public void getGesamt(){
+	 f=new File("C:/User/Sebastian/Desktop");
+	 f.listFiles(fnf);//fnf createn und suchalgorythmus anpassen :)
+ }
  public void handlerequest(ObjectInputStream ois,ObjectOutputStream oos){
-	try {
+	 
+	 try {
 		request=(String) ois.readObject();
 	} catch (IOException e) {
 		// TODO Auto-generated catch block
@@ -220,12 +215,40 @@ System.out.println("Bestellung verarbeitet");
 	{
 	case "getRestaurant()":
 		getRestaurant();
+		break;
 	case "setRestaurant()":
 		setRestaurant();
+		break;
 	case "setOrder()":
 		setOrder();
+		break;
+	case "log_in()":
+		log_in();
+		break;
+	case "getGesamt()":
+		getGesamt();
+		break;
 	}
-}
+	
+	
+ }
+ public void log_in(){
+	 System.out.println("Log in try");
+	 try {
+		AdminID=(String) ois.readObject();
+		System.out.println("read the id");
+		AdminPw=(String) ois.readObject();
+		System.out.println("read the pw");
+		if(AdminID.equals("Mozez")){
+		oos.writeObject("Access Granted");
+		System.out.println("Log in succesful");
+		}
+	} catch (ClassNotFoundException | IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	 
+ }
  public void exit(){
 	try {
 
