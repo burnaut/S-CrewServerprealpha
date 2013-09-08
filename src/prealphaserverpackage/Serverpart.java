@@ -8,7 +8,6 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import javax.imageio.ImageIO;
 
-import java.io.EOFException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -67,8 +66,8 @@ class clientsidethreads extends Thread{
 private	Socket clientside = null;
 FileWriter fw = null;
 PrintWriter pw=null;
-FileReader fr=null;
-BufferedReader br=null;
+//FileReader fr=null;
+BufferedReader fr=null;
 InputStream i=null;
 OutputStream o=null;
 ObjectInputStream ois=null;
@@ -76,7 +75,7 @@ ObjectOutputStream oos=null;
 ReentrantLock lock=new ReentrantLock();
 
 
-char[] cbuf = new char [100];
+char[] cbuf = new char [10000];
 HashMap<String,Number> anzahluser = null;
 HashMap<String,String> behelfsmap=null;
 HashMap<String,String> userbestellung=null;
@@ -86,7 +85,9 @@ String request=null;
 String AdminID;
 String AdminPw;
 File f;
-FilenameFilter fnf;
+String[] bestellungenliste;
+String reset=null;
+
 public clientsidethreads(Socket clientSocket) {
     this.clientside = clientSocket;
     
@@ -132,7 +133,7 @@ public clientsidethreads(Socket clientSocket) {
 		e.printStackTrace();
 	}
 	pw= new PrintWriter(fw);
-	pw.write(userbestellung.get(UserID));
+	pw.write(UserID+": "+userbestellung.get(UserID));
 	
 	pw.close();
 	try {
@@ -196,8 +197,64 @@ System.out.println("Bestellung verarbeitet");
 	
  }
  public void getGesamt(){
-	 f=new File("C:/User/Sebastian/Desktop");
-	 f.listFiles(fnf);//fnf createn und suchalgorythmus anpassen :)
+	 f=new File("C:/Users/Sebastian/workspace1/S-CrewServerprealpha");
+	 File[] filelistarray=f.listFiles(new FilenameFilter(){
+		 public boolean accept(File f,String s){
+				return s.toLowerCase().endsWith("s_bestellung.txt");
+				
+			} 
+	 });//fnf createn und suchalgorythmus anpassen :)	 
+	 String tempbestellung;
+	 String tempvorherigedat;
+	 String gesamtbest;
+	 StringBuffer tempstringbuf = new StringBuffer();
+	 for(int x=0; x<filelistarray.length;x++){
+//		 System.out.println(x+": "+filelistarray[x]);
+		 try{
+			 fr=new BufferedReader( new FileReader( filelistarray[x]));
+			 tempbestellung=fr.readLine();
+			 fr= new BufferedReader(new FileReader("GesamtBestellung.txt"));
+			 tempvorherigedat=fr.readLine();
+			 fw= new FileWriter("GesamtBestellung.txt");
+			 pw=new PrintWriter(fw);
+			 pw.write(tempbestellung+"-"+tempvorherigedat);
+			 pw.flush();
+			 
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		try {
+			fr.close();
+			pw.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	 
+	
+	 }//for ende
+	 	//reset der gesamtbestellung
+	 try {
+		fr=new BufferedReader(new FileReader("GesamtBestellung.txt"));
+		fr.read(cbuf);
+		 tempstringbuf.append(cbuf);
+		 gesamtbest=tempstringbuf.toString();
+		 System.out.println(gesamtbest);
+			oos.writeObject(gesamtbest);
+			fw=new FileWriter("GesamtBestellung.txt");
+			pw=new PrintWriter(fw);
+			pw.write(reset);
+			pw.flush();
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	 
  }
  public void handlerequest(ObjectInputStream ois,ObjectOutputStream oos){
 	 
@@ -271,4 +328,3 @@ System.out.println("Bestellung verarbeitet");
     
 }
 }
-	

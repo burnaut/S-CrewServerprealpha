@@ -4,6 +4,8 @@
  */
 package prealphaserverpackage;
 
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Sebastian
@@ -11,6 +13,7 @@ package prealphaserverpackage;
 @SuppressWarnings("serial")
 public class NewMDIApplication extends javax.swing.JFrame {
 	Thread backend=null;
+	int serverstate=0;
     /**
      * Creates new form NewMDIApplication
      */
@@ -51,7 +54,7 @@ public class NewMDIApplication extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         desktopPane.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        desktopPane.setFont(new java.awt.Font("Lucida Blackletter", 2, 18)); // NOI18N
+        desktopPane.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
 
         menuBar.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
 
@@ -128,18 +131,26 @@ public class NewMDIApplication extends javax.swing.JFrame {
     }// </editor-fold>
 
     private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {                                             
-        System.exit(0);
+        serverstate=0;
+    	System.exit(0);
     }                                            
 
     private void openMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
-    	 // TODO add your handling code here:
-    	backend=new Thread(new Runnable(){
+    	if(serverstate==0){
+    	// TODO add your handling code here:
+    		serverstate=1;
+    		backend=new Thread(new Runnable(){
     		public void run(){
     	Serverpart sp=new Serverpart();
        sp.runanew(5543);
     		}});
     	backend.start();
-    }
+    	JOptionPane.showMessageDialog(null, "Server started","Server Info",JOptionPane.INFORMATION_MESSAGE, null);
+    	}
+    	else{
+    		JOptionPane.showMessageDialog(null, "Server is running already","Server Info",JOptionPane.ERROR_MESSAGE, null);
+    	}
+    	}
 
     private void contentMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
 System.out.println("Developed by Sebastian Walla for more information click the about button :)");
