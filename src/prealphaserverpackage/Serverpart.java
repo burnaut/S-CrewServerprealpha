@@ -15,12 +15,17 @@ import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -32,7 +37,50 @@ public class Serverpart {
 
 public static	ServerSocket serversocket= null;
 public static	Socket clientside = null;
+
+public void htmldoc(){
+	URL url;
+	URLConnection urlc;
+	InputStream i;
+	BufferedReader br;
+	String line;
+	String[] htmldoc=new String[10000];
+	boolean searching=false;
+	//char[] cb=new char[10000];
+	int x=0;
 	
+	try {
+		url=new URL("http://wikis.zum.de/rmg/Neue_Oberstufe/Klausurtermine_Q11");
+		urlc=url.openConnection();
+		i= urlc.getInputStream();
+		br= new BufferedReader(new InputStreamReader(i));
+		for(int y=0; (line=br.readLine())!=null;y++){
+		htmldoc[y]=line;
+		System.out.println(y+".  "+htmldoc[y]);
+		
+		}
+		searching=true;
+		while(searching==true){
+		 if(htmldoc[x].equalsIgnoreCase(".Halbjahr")){
+			System.out.println(htmldoc[x]);
+		}
+		 else{
+			 x++;
+		 }
+		
+		}
+//		while ((line=br.readLine())!=null){
+//			System.out.println(line);
+//		}
+		
+	} catch (MalformedURLException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+}
 		
 	/**
 	 * 
@@ -51,6 +99,7 @@ public static	Socket clientside = null;
 		while(true){
 			try {
 				clientside=serversocket.accept();
+				System.out.println("accepting new client");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -81,12 +130,15 @@ HashMap<String,String> behelfsmap=null;
 HashMap<String,String> userbestellung=null;
 String UserID = null;
 String Restaurant;
-String request=null;
+int request=0;
 String AdminID;
 String AdminPw;
 File f;
 String[] bestellungenliste;
 String reset=null;
+String Forum_msg;
+
+
 
 public clientsidethreads(Socket clientSocket) {
     this.clientside = clientSocket;
@@ -114,18 +166,48 @@ public clientsidethreads(Socket clientSocket) {
 	
 //	exit();
   }
-	
 
- @SuppressWarnings("unchecked")
- public void setOrder() {
-	 System.out.println("Bestellung kommt an");
-	 try {
-		UserID=(String) ois.readObject();
-		userbestellung= (HashMap<String, String>) ois.readObject();
-	} catch (ClassNotFoundException | IOException e) {
+  
+
+public void sendForum_msg(){
+	String tempMsg=null;
+	try {BufferedReader fr =
+	           new BufferedReader( new FileReader( "Forum.txt" ));
+		
+		Forum_msg=(String) ois.readObject();
+		tempMsg=fr.readLine();
+		fw=new FileWriter("Forum.txt");
+		pw=new PrintWriter(fw);
+		pw.write(tempMsg+Forum_msg);
+		pw.flush();
+		pw.close();
+		fw.close();
+		fr.close();
+	           
+	} catch (ClassNotFoundException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
+	 catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	
+}
+  @SuppressWarnings("unchecked") 
+ public void setOrder() {
+	
+	 try {
+		UserID=(String) ois.readObject();
+		userbestellung= (HashMap<String, String>) ois.readObject();
+	} catch (ClassNotFoundException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	 catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	 try {
 		fw= new FileWriter(UserID+"s_Bestellung.txt");
 	} catch (IOException e) {
@@ -145,13 +227,18 @@ public clientsidethreads(Socket clientSocket) {
 System.out.println("Bestellung verarbeitet");
  }
  public void getRestaurant() {
-	String tempRestaurant=null;
-	try( BufferedReader fr =
-	           new BufferedReader( new FileReader( "Restaurant.txt" ))) {
+	 String tempRestaurant=null;
+	 System.out.println("Reading Restaurant.txt");
+	try { BufferedReader fr =
+	           new BufferedReader( new FileReader( "Restaurant.txt" ));
 	      tempRestaurant = fr.readLine();
 	      System.out.println( tempRestaurant );
-		    
+	      System.out.println("writing tempRestaurant is the next Step");
 	    oos.writeObject(tempRestaurant);
+	    oos.flush();
+	    System.out.println("tempRestaurant has been written");
+	    oos.close();
+	    fr.close();
 	} catch (IOException ex) {
 	    ex.printStackTrace();
      }        
@@ -170,11 +257,16 @@ System.out.println("Bestellung verarbeitet");
 		
 	}
  public void setRestaurant() {
-    try {
+   
+	 try {
 		Restaurant=(String) ois.readObject();
-	} catch (ClassNotFoundException | IOException e1) {
+	} catch (ClassNotFoundException e1) {
 		// TODO Auto-generated catch block
 		e1.printStackTrace();
+	}
+    catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
 	}
     try {
 		lock.lock();
@@ -197,13 +289,15 @@ System.out.println("Bestellung verarbeitet");
 	
  }
  public void getGesamt(){
-	 f=new File("C:/Users/Sebastian/workspace1/S-CrewServerprealpha");
+	
+	 f=new File(/*"/home/sebastian/Desktop"*/"C:/Users/Sebastian/Desktop");// TODO pfad noch anpassen!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	 File[] filelistarray=f.listFiles(new FilenameFilter(){
 		 public boolean accept(File f,String s){
 				return s.toLowerCase().endsWith("s_bestellung.txt");
-				
-			} 
-	 });//fnf createn und suchalgorythmus anpassen :)	 
+				} 
+	 });
+	 //fnf createn und suchalgorythmus anpassen :)	 
+	 
 	 String tempbestellung;
 	 String tempvorherigedat;
 	 String gesamtbest;
@@ -239,13 +333,24 @@ System.out.println("Bestellung verarbeitet");
 	
 	 }//for ende
 	 	//reset der gesamtbestellung
+	 // vl alte bestellungen abspeichern und zeugreifbar machen möglicherweise in einem update...
 	 try {
 		fr=new BufferedReader(new FileReader("GesamtBestellung.txt"));
 		fr.read(cbuf);
 		 tempstringbuf.append(cbuf);
 		 gesamtbest=tempstringbuf.toString();
-		 System.out.println(gesamtbest);
+		// System.out.println(gesamtbest);
 			oos.writeObject(gesamtbest);
+			oos.flush();
+			GregorianCalendar c=new GregorianCalendar();//um einen timestamp zu erzeugen
+			int day=c.get(GregorianCalendar.DAY_OF_MONTH);
+			int month=c.get(GregorianCalendar.MONTH);
+			String daystr= String.valueOf(day);
+			String monthstr=String.valueOf(month);
+			fw=new FileWriter(daystr+"_"+monthstr+"_Bestellung.txt");//systemdate+bestellung
+			pw=new PrintWriter(fw);
+			pw.write(gesamtbest);
+			pw.flush();
 			fw=new FileWriter("GesamtBestellung.txt");
 			pw=new PrintWriter(fw);
 			pw.write(reset);
@@ -259,51 +364,59 @@ System.out.println("Bestellung verarbeitet");
  public void handlerequest(ObjectInputStream ois,ObjectOutputStream oos){
 	 
 	 try {
-		request=(String) ois.readObject();
+		 System.out.println("reading request...");
+		request=(int) ois.readInt();
 	} catch (IOException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
-	} catch (ClassNotFoundException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
 	}
-	//ab hier dann switch case :)
-	switch (request)
-	{
-	case "getRestaurant()":
-		getRestaurant();
-		break;
-	case "setRestaurant()":
-		setRestaurant();
-		break;
-	case "setOrder()":
-		setOrder();
-		break;
-	case "log_in()":
-		log_in();
-		break;
-	case "getGesamt()":
-		getGesamt();
-		break;
-	}
+	
+	//problem mit switch case bei den beiden gettern sie kommt an wird aber nicht ausgeführt :((
+	 switch (request){
+	 
+	 case 1:
+		 getRestaurant();
+		 break;
+	 case 2:
+		 setRestaurant();
+		 break;
+	 case 3:
+	     setOrder();
+	     break;
+	 case 4:
+		 log_in();
+		 break;
+	 case 5:
+		 getGesamt();
+		 break;
+	 }
+	
+		
 	
 	
  }
  public void log_in(){
-	 System.out.println("Log in try");
+	 
 	 try {
 		AdminID=(String) ois.readObject();
 		System.out.println("read the id");
 		AdminPw=(String) ois.readObject();
 		System.out.println("read the pw");
 		if(AdminID.equals("Mozez")){
+			if(AdminPw.equals("ghghgh")){
 		oos.writeObject("Access Granted");
+		oos.flush();
 		System.out.println("Log in succesful");
 		}
-	} catch (ClassNotFoundException | IOException e) {
+		}
+	} catch (ClassNotFoundException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
+	 catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	 
  }
  public void exit(){

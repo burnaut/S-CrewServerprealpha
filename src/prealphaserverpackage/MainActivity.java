@@ -7,7 +7,9 @@ public class MainActivity {
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-     NewMDIApplication.main(null);
+//		Serverpart sp=new Serverpart();
+//		sp.htmldoc();
+     	NewMDIApplication.main(null);
 	}
 
 }

@@ -138,13 +138,14 @@ public class NewMDIApplication extends javax.swing.JFrame {
     private void openMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
     	if(serverstate==0){
     	// TODO add your handling code here:
-    		serverstate=1;
+    		
     		backend=new Thread(new Runnable(){
     		public void run(){
     	Serverpart sp=new Serverpart();
-       sp.runanew(5543);
+       sp.runanew(5543);//evtl. Port ändern :) !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     		}});
     	backend.start();
+    	serverstate=1;
     	JOptionPane.showMessageDialog(null, "Server started","Server Info",JOptionPane.INFORMATION_MESSAGE, null);
     	}
     	else{
