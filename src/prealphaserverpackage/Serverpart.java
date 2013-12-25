@@ -15,16 +15,12 @@ import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.net.MalformedURLException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.concurrent.locks.ReentrantLock;
@@ -38,53 +34,7 @@ public class Serverpart {
 public static	ServerSocket serversocket= null;
 public static	Socket clientside = null;
 
-public void htmldoc(){
-	URL url;
-	URLConnection urlc;
-	InputStream i;
-	BufferedReader br;
-	String line;
-	String[] htmldoc=new String[10000];
-	boolean searching=false;
-	//char[] cb=new char[10000];
-	int x=0;
-	
-	try {
-		url=new URL("http://wikis.zum.de/rmg/Neue_Oberstufe/Klausurtermine_Q11");
-		urlc=url.openConnection();
-		i= urlc.getInputStream();
-		br= new BufferedReader(new InputStreamReader(i));
-		for(int y=0; (line=br.readLine())!=null;y++){
-		htmldoc[y]=line;
-		System.out.println(y+".  "+htmldoc[y]);
-		
-		}
-		searching=true;
-		while(searching==true){
-		 if(htmldoc[x].equalsIgnoreCase(".Halbjahr")){
-			System.out.println(htmldoc[x]);
-		}
-		 else{
-			 x++;
-		 }
-		
-		}
-//		while ((line=br.readLine())!=null){
-//			System.out.println(line);
-//		}
-		
-	} catch (MalformedURLException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	} catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
-}
-		
-	/**
-	 * 
-	 */
+
 	//how about a switch case scenario string with name of the method sent by a client gets procces further here :) like the simon protocol
 	
 	
@@ -290,7 +240,7 @@ System.out.println("Bestellung verarbeitet");
  }
  public void getGesamt(){
 	
-	 f=new File(/*"/home/sebastian/Desktop"*/"C:/Users/Sebastian/Desktop");// TODO pfad noch anpassen!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	 f=new File("/home/pi/Serverprealpha");// TODO pfad noch anpassen!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	 File[] filelistarray=f.listFiles(new FilenameFilter(){
 		 public boolean accept(File f,String s){
 				return s.toLowerCase().endsWith("s_bestellung.txt");
