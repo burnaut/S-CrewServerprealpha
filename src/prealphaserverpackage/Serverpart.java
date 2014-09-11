@@ -240,7 +240,7 @@ System.out.println("Bestellung verarbeitet");
  }
  public void getGesamt(){
 	
-	 f=new File("/home/pi/Serverprealpha");// TODO pfad noch anpassen!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	 f=new File("/var/www");// TODO pfad noch anpassen!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	 File[] filelistarray=f.listFiles(new FilenameFilter(){
 		 public boolean accept(File f,String s){
 				return s.toLowerCase().endsWith("s_bestellung.txt");
